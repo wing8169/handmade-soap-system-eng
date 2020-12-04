@@ -1,12 +1,7 @@
 package handmadesoupmanagementsystem;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.print.PrinterException;
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -15,7 +10,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -43,13 +37,13 @@ public class Main extends javax.swing.JFrame {
         TableOperation.initTableDesign(jTable1);
         TableOperation.initTableDesign(jTable2);
         if (mode.equals("solid")) {
-            jLabel79.setText("手工皂懒人包（固态皂）");
-            jButton10.setText("切换液态皂");
-            jTable1.getColumnModel().getColumn(jTable1.getColumn("KOH公克数").getModelIndex()).setHeaderValue("NaOH公克数");
+            jLabel79.setText("Handmade Soap Management System（Solid）");
+            jButton10.setText("Switch to Liquid");
+            jTable1.getColumnModel().getColumn(jTable1.getColumn("KOH (g)").getModelIndex()).setHeaderValue("NaOH (g)");
             jTable1.getTableHeader().repaint();
         } else {
-            jLabel79.setText("手工皂懒人包（液态皂）");
-            jButton10.setText("切换固态皂");
+            jLabel79.setText("Handmade Soap Management System（Liquid）");
+            jButton10.setText("Switch to Solid");
         }
         // initialize database
         DatabaseOperation.createTable("oil",
@@ -179,7 +173,7 @@ public class Main extends javax.swing.JFrame {
         model.setRowCount(0);
         int count = 1;
         for (Oil o : selectedOil.keySet()) {
-            model.addRow(new Object[]{count, o.getNameChi(), selectedOil.get(o)});
+            model.addRow(new Object[]{count, o.getNameEng(), selectedOil.get(o)});
             count++;
         }
     }
@@ -200,7 +194,7 @@ public class Main extends javax.swing.JFrame {
         int i = 1;
         double NaOHTotal = 0, INSTotal = 0, pctTotal = 0, oilTotal = 0;
         for (Oil o : selectedOil.keySet()) {
-            String nameChi = o.getNameChi();
+            String nameEng = o.getNameEng();
             String pct = String.format("%.2f", selectedOil.get(o));
             String oilAmnt = String.format("%.2f", (selectedOil.get(o) * oilAmount / 100.0f));
             String NaOH;
@@ -221,14 +215,14 @@ public class Main extends javax.swing.JFrame {
             INSTotal += Double.parseDouble(currentInsTotal);
             pctTotal += Double.parseDouble(pct);
             oilTotal += Double.parseDouble(oilAmnt);
-            model.addRow(new Object[]{i, nameChi, pct, oilAmnt, NaOH, NaOHAmnt, ins, currentInsTotal});
+            model.addRow(new Object[]{i, nameEng, pct, oilAmnt, NaOH, NaOHAmnt, ins, currentInsTotal});
             i++;
         }
         model.addRow(new Object[]{null, null, String.format("%.2f", pctTotal), String.format("%.2f", oilTotal), null, String.format("%d", Math.round(NaOHTotal)), null, String.format("%d", Math.round(INSTotal))});
-        model.addRow(new Object[]{null, null, null, null, null, String.format("水 = %d", Math.round(Math.round(NaOHTotal) * waterAmount)), null, null});
+        model.addRow(new Object[]{null, null, null, null, null, String.format("Water = %d", Math.round(Math.round(NaOHTotal) * waterAmount)), null, null});
         double grandTotal = Math.round(NaOHTotal) + oilTotal + Math.round(NaOHTotal * waterAmount);
-        model.addRow(new Object[]{String.format("总重量 = %d", Math.round(grandTotal)), null, null, null, null, null, null, null});
-        model.addRow(new Object[]{"实际重量 = ", null, null, null, null, null, null, null, null});
+        model.addRow(new Object[]{"Total (g) =", Math.round(grandTotal), null, null, null, null, null, null});
+        model.addRow(new Object[]{"Actual (g) = ", null, null, null, null, null, null, null, null});
     }
 
     @SuppressWarnings("unchecked")
@@ -249,7 +243,7 @@ public class Main extends javax.swing.JFrame {
         jTextField89 = new javax.swing.JTextField();
         jTextField90 = new javax.swing.JTextField();
         jButton10 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox1 = new javax.swing.JComboBox<String>();
         jLabel83 = new javax.swing.JLabel();
         jScrollPane12 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -264,8 +258,7 @@ public class Main extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(255, 153, 204));
 
         jLabel78.setFont(new java.awt.Font("Arial Unicode MS", 1, 24)); // NOI18N
-        jLabel78.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel78.setText("油量总量 : ");
+        jLabel78.setText("Total Oil Amount: ");
 
         jLabel98.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
         jLabel98.setForeground(new java.awt.Color(102, 102, 102));
@@ -285,7 +278,7 @@ public class Main extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No.", "油品", "百分比", "油品公克数", "皂化价", "KOH公克数", "INS值", "INS合计"
+                "No.", "Oil", "Percentage", "Oil Amount (g)", "Saponification Price", "KOH (g)", "INS", "total INS"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -299,11 +292,12 @@ public class Main extends javax.swing.JFrame {
         jTable1.setGridColor(new java.awt.Color(0, 0, 0));
         jTable1.setRowHeight(24);
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTable1.setSurrendersFocusOnKeystroke(true);
         jScrollPane11.setViewportView(jTable1);
 
         jButton7.setBackground(new java.awt.Color(0, 153, 255));
         jButton7.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton7.setText("添加油品");
+        jButton7.setText("Add Oil");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
@@ -312,7 +306,7 @@ public class Main extends javax.swing.JFrame {
 
         jButton8.setBackground(new java.awt.Color(0, 153, 255));
         jButton8.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton8.setText("继续");
+        jButton8.setText("Proceed");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
@@ -320,13 +314,12 @@ public class Main extends javax.swing.JFrame {
         });
 
         jLabel79.setFont(new java.awt.Font("Arial Unicode MS", 1, 36)); // NOI18N
-        jLabel79.setForeground(new java.awt.Color(0, 0, 0));
         jLabel79.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel79.setText("手工皂懒人包（固态皂）");
+        jLabel79.setText("Handmade Soap Management System（Solid）");
 
         jButton9.setBackground(new java.awt.Color(0, 153, 255));
         jButton9.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton9.setText("删除选定油品");
+        jButton9.setText("Remove Selected Oil");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton9ActionPerformed(evt);
@@ -334,8 +327,7 @@ public class Main extends javax.swing.JFrame {
         });
 
         jLabel81.setFont(new java.awt.Font("Arial Unicode MS", 1, 24)); // NOI18N
-        jLabel81.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel81.setText("水量倍数 : ");
+        jLabel81.setText("Water Multiplier : ");
 
         jTextField89.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
 
@@ -343,8 +335,7 @@ public class Main extends javax.swing.JFrame {
 
         jButton10.setBackground(new java.awt.Color(0, 153, 255));
         jButton10.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton10.setForeground(new java.awt.Color(0, 0, 0));
-        jButton10.setText("切换液态皂");
+        jButton10.setText("Switch to Liquid");
         jButton10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton10ActionPerformed(evt);
@@ -354,8 +345,7 @@ public class Main extends javax.swing.JFrame {
         jComboBox1.setFont(new java.awt.Font("Arial Unicode MS", 0, 24)); // NOI18N
 
         jLabel83.setFont(new java.awt.Font("Arial Unicode MS", 1, 24)); // NOI18N
-        jLabel83.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel83.setText("导入配方 :");
+        jLabel83.setText("Import Recipe: ");
 
         jTable2.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
@@ -363,7 +353,7 @@ public class Main extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No.", "油品", "百分比"
+                "No.", "Oil", "Percentage"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -381,7 +371,7 @@ public class Main extends javax.swing.JFrame {
 
         jButton12.setBackground(new java.awt.Color(0, 153, 255));
         jButton12.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton12.setText("更改选定油品的百分比");
+        jButton12.setText("Change Oil Percentage");
         jButton12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton12ActionPerformed(evt);
@@ -391,7 +381,7 @@ public class Main extends javax.swing.JFrame {
         jButton13.setBackground(new java.awt.Color(255, 0, 0));
         jButton13.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
         jButton13.setForeground(new java.awt.Color(255, 255, 255));
-        jButton13.setText("清空所有格子");
+        jButton13.setText("Clear All");
         jButton13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton13ActionPerformed(evt);
@@ -400,7 +390,7 @@ public class Main extends javax.swing.JFrame {
 
         jButton11.setBackground(new java.awt.Color(0, 153, 255));
         jButton11.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton11.setText("保存配方");
+        jButton11.setText("Save Recipe");
         jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton11ActionPerformed(evt);
@@ -411,20 +401,8 @@ public class Main extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGap(129, 129, 129)
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(179, 179, 179))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(327, 327, 327)
-                        .addComponent(jLabel81))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(166, 166, 166)
                         .addComponent(jLabel98))
@@ -432,38 +410,49 @@ public class Main extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 1030, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(329, 329, 329)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel79, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
-                                .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel4Layout.createSequentialGroup()
-                                    .addComponent(jLabel78)
-                                    .addGap(4, 4, 4)
-                                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jTextField89, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jTextField90, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel83)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton13))))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(279, 279, 279)
                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(103, 103, 103)
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(371, 371, 371)
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(198, 198, 198)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel78)
+                            .addComponent(jLabel83)
+                            .addComponent(jLabel81))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField90, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(jButton13))
+                            .addComponent(jTextField89, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel79)))
+                .addContainerGap(114, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(129, 129, 129)
+                .addComponent(jScrollPane12)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(179, 179, 179))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabel79, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton10)
-                .addGap(18, 18, 18)
+                .addGap(22, 22, 22)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel83, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -507,7 +496,7 @@ public class Main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1127, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -522,13 +511,13 @@ public class Main extends javax.swing.JFrame {
                 if ((mode.equals("solid") && oil.getNaOH() == -1 && oil.getINSsolid() == -1) || (mode.equals("liquid") && oil.getKOH() == -1 && oil.getINSliquid() == -1)) {
                     continue;
                 }
-                oilBox.addItem(oil.getNameChi());
+                oilBox.addItem(oil.getNameEng());
             }
         }
         final JComponent[] inputs = new JComponent[]{
-            new JLabel("油"),
+            new JLabel("Oil"),
             oilBox,
-            new JLabel("油百分比"),
+            new JLabel("Oil Percentage"),
             pctField
         };
         int result = JOptionPane.showConfirmDialog(null, inputs, "Oil Info", JOptionPane.PLAIN_MESSAGE);
@@ -537,18 +526,18 @@ public class Main extends javax.swing.JFrame {
                 Oil selected = null;
                 // grab selected-oil-related data from storage
                 for (Oil o : oilInfo) {
-                    if (o.getNameChi().equals(oilBox.getSelectedItem().toString())) {
+                    if (o.getNameEng().equals(oilBox.getSelectedItem().toString())) {
                         selected = o;
                         break;
                     }
                 }
                 if (selected == null) {
-                    JOptionPane.showMessageDialog(this, "没有可用的油，请重试。");
+                    JOptionPane.showMessageDialog(this, "No available oil.");
                 } else {
                     // if data successfully grabbed
                     double currentPct = Double.parseDouble(pctField.getText());
                     if (currentPct <= 0 || currentPct > 100) {
-                        JOptionPane.showMessageDialog(this, "百分比超出限制。");
+                        JOptionPane.showMessageDialog(this, "Oil exceeds percentage limit.");
                     } else {
                         // add and try generate table
                         selectedOil.put(selected, currentPct);
@@ -557,7 +546,7 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "百分比格式不对！");
+                JOptionPane.showMessageDialog(this, "Invalid percentage!");
             }
         }
     }//GEN-LAST:event_jButton7ActionPerformed
@@ -570,15 +559,15 @@ public class Main extends javax.swing.JFrame {
         int row = jTable2.getSelectedRow();
         // if a row is selected
         if (row != -1) {
-            String nameChi = jTable2.getModel().getValueAt(row, jTable2.getColumn("油品").getModelIndex()).toString();
+            String nameEng = jTable2.getModel().getValueAt(row, jTable2.getColumn("Oil").getModelIndex()).toString();
             // confimation
-            int rslt = JOptionPane.showConfirmDialog(this, "确认删除油品 " + nameChi + "？", "Delete", JOptionPane.OK_CANCEL_OPTION);
+            int rslt = JOptionPane.showConfirmDialog(this, "Confirm to delete " + nameEng + "?", "Delete", JOptionPane.OK_CANCEL_OPTION);
             // if yes
             if (rslt == JOptionPane.OK_OPTION) {
                 // remove the record from database
                 Oil tmp = null;
                 for (Oil o : selectedOil.keySet()) {
-                    if (o.getNameChi().equals(nameChi)) {
+                    if (o.getNameEng().equals(nameEng)) {
                         tmp = o;
                         break;
                     }
@@ -606,25 +595,25 @@ public class Main extends javax.swing.JFrame {
         int row = jTable2.getSelectedRow();
         // if a row is selected
         if (row != -1) {
-            String nameChi = jTable2.getModel().getValueAt(row, jTable2.getColumn("油品").getModelIndex()).toString();
+            String nameEng = jTable2.getModel().getValueAt(row, jTable2.getColumn("Oil").getModelIndex()).toString();
             // find the selected oil data from storage
             Oil tmp = null;
             for (Oil o : selectedOil.keySet()) {
-                if (o.getNameChi().equals(nameChi)) {
+                if (o.getNameEng().equals(nameEng)) {
                     tmp = o;
                     break;
                 }
             }
             JComboBox oilBox = new JComboBox();
             JTextField pctField = new JTextField();
-            oilBox.addItem(nameChi);
+            oilBox.addItem(nameEng);
             oilBox.setEnabled(false);
             double crtPct = selectedOil.get(tmp);
             pctField.setText(Double.toString(crtPct));
             final JComponent[] inputs = new JComponent[]{
-                new JLabel("油"),
+                new JLabel("Oil"),
                 oilBox,
-                new JLabel("油百分比"),
+                new JLabel("Oil Percentage"),
                 pctField
             };
             int result = JOptionPane.showConfirmDialog(null, inputs, "Oil Info", JOptionPane.PLAIN_MESSAGE);
@@ -633,7 +622,7 @@ public class Main extends javax.swing.JFrame {
                     // if data successfully grabbed
                     double currentPct = Double.parseDouble(pctField.getText());
                     if (currentPct <= 0 || currentPct > 100) {
-                        JOptionPane.showMessageDialog(this, "百分比超出限制。");
+                        JOptionPane.showMessageDialog(this, "Percentage exceeds limit.");
                     } // if the oil can fit
                     else {
                         // add and try generate table
@@ -642,7 +631,7 @@ public class Main extends javax.swing.JFrame {
                         updateOilTable();
                     }
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "百分比格式不对！");
+                    JOptionPane.showMessageDialog(this, "Invalid percentage format！");
                 }
             }
         }
@@ -672,7 +661,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        int result = JOptionPane.showConfirmDialog(null, "是否储存当前配方？");
+        int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to save the recipe?");
         // if the data is complete
         if (result == JOptionPane.OK_OPTION) {
             boolean completed = false;
@@ -683,17 +672,17 @@ public class Main extends javax.swing.JFrame {
             }
             JTextField nameField = new JTextField();
             final JComponent[] askName = new JComponent[]{
-                new JLabel("请命名配方 : "),
+                new JLabel("Please name your recipe : "),
                 nameField,};
             int result2 = JOptionPane.showConfirmDialog(null, askName, "Oil Info", JOptionPane.PLAIN_MESSAGE);
             if (result2 == JOptionPane.OK_OPTION) {
                 String name = nameField.getText();
                 if (namelist.contains(name)) {
-                    int result3 = JOptionPane.showConfirmDialog(this, "该配方名字已经存在，是否覆盖之前的纪录？");
+                    int result3 = JOptionPane.showConfirmDialog(this, "Recipe name already exists, overwrite it？");
                     if (result3 == JOptionPane.OK_OPTION) {
                         updateHistory(name);
                     } else {
-                        JOptionPane.showMessageDialog(this, "已取消保存。");
+                        JOptionPane.showMessageDialog(this, "Cancelled Saving.");
                     }
                 } else {
                     addHistory(name);
@@ -717,12 +706,12 @@ public class Main extends javax.swing.JFrame {
                 new Object[]{name, mode, oilAmount, waterAmount, selectedOilInfo},
                 new String[]{"string", "string", "double", "double", "string"});
         // notification
-        JOptionPane.showMessageDialog(this, "手工皂配方 " + name + " 储存成功!");
+        JOptionPane.showMessageDialog(this, "Recipe " + name + " is saved successfully!");
         // update combobox
         jComboBox1.addItem(name);
     }
-    
-    private void updateHistory(String name){
+
+    private void updateHistory(String name) {
         String selectedOilInfo = "";
         int count = 0;
         for (Oil o : selectedOil.keySet()) {
@@ -733,13 +722,13 @@ public class Main extends javax.swing.JFrame {
             }
         }
         DatabaseOperation.updateHistoricData(
-                "history", 
-                new String[]{"mode", "oilAmount", "waterAmount", "selectedOilInfo"}, 
-                new Object[]{mode, oilAmount, waterAmount, selectedOilInfo}, 
+                "history",
+                new String[]{"mode", "oilAmount", "waterAmount", "selectedOilInfo"},
+                new Object[]{mode, oilAmount, waterAmount, selectedOilInfo},
                 name,
                 new String[]{"string", "double", "double", "string"});
         // notification
-        JOptionPane.showMessageDialog(this, "手工皂配方 " + name + " 储存成功!");
+        JOptionPane.showMessageDialog(this, "Recipe " + name + " is saved successfully!");
     }
 
     public static void main(String args[]) {

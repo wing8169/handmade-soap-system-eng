@@ -11,7 +11,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import javax.swing.JComboBox;
@@ -19,7 +18,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -48,7 +46,7 @@ public class PriceList extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         TableOperation.initTableDesign(jTable1);
         // filter
-        TableOperation.initTableFilter(jTable1, jTextField89, "物品");
+        TableOperation.initTableFilter(jTable1, jTextField89, "Item");
         // get addOns data
         addOns = DatabaseOperation.getData("addOns");
         updateTable();
@@ -65,16 +63,16 @@ public class PriceList extends javax.swing.JFrame {
             double currentPrice = oil.getPrice();
             if (currentPrice > 0) {
                 double finalPrice = currentPrice / 1000.0 * currentAmount;
-                tableData.add(new Object[]{oil.getNameChi(), String.format("%.2f / 1000克", currentPrice), currentAmount, String.format("%.2f", finalPrice)});
+                tableData.add(new Object[]{oil.getNameEng(), String.format("%.2f / 1000g", currentPrice), currentAmount, String.format("%.2f", finalPrice)});
             } else {
-                tableData.add(new Object[]{oil.getNameChi(), "-", currentAmount, String.format("%.2f", 0.00f)});
+                tableData.add(new Object[]{oil.getNameEng(), "-", currentAmount, String.format("%.2f", 0.00f)});
             }
         }
         // addOns data
         for (AddOns addons : Main.selectedAddOns) {
             if (addons.getPrice() > 0) {
                 double finalPrice = addons.getPrice() / addons.getOriginalAmount() * addons.getFinalAmount();
-                tableData.add(new Object[]{addons.getName(), String.format("%.2f / %.2f克",
+                tableData.add(new Object[]{addons.getName(), String.format("%.2f / %.2fg",
                     addons.getPrice(), addons.getOriginalAmount()), addons.getFinalAmount(), String.format("%.2f", finalPrice)});
             } else {
                 tableData.add(new Object[]{addons.getName(), "-", addons.getFinalAmount(), 0.0});
@@ -85,9 +83,9 @@ public class PriceList extends javax.swing.JFrame {
         try {
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
             for (int i = 0; i < jTable1.getRowCount(); i++) {
-                total += Double.parseDouble(model.getValueAt(jTable1.convertRowIndexToModel(i), jTable1.getColumn("价格(RM)").getModelIndex()).toString());
+                total += Double.parseDouble(model.getValueAt(jTable1.convertRowIndexToModel(i), jTable1.getColumn("Cost (RM)").getModelIndex()).toString());
             }
-            model.addRow(new Object[]{"", "", "", "总价", String.format("%.2f", total)});
+            model.addRow(new Object[]{"", "", "", "Total", String.format("%.2f", total)});
         } catch (NumberFormatException e) {
 
         }
@@ -131,7 +129,7 @@ public class PriceList extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No.", "物品", "成本(RM)", "用量(克/升)", "价格(RM)"
+                "No.", "Item", "Cost (RM)", "Amount (g/l)", "Total (RM)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -151,7 +149,8 @@ public class PriceList extends javax.swing.JFrame {
         }
 
         jButton10.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton10.setText("加添加物");
+        jButton10.setText("Add Add-Ons");
+        jButton10.setActionCommand("Add Ingredients");
         jButton10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton10ActionPerformed(evt);
@@ -159,7 +158,7 @@ public class PriceList extends javax.swing.JFrame {
         });
 
         jButton11.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton11.setText("移除添加物");
+        jButton11.setText("Remove Add-Ons");
         jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton11ActionPerformed(evt);
@@ -169,15 +168,13 @@ public class PriceList extends javax.swing.JFrame {
         jTextField89.setFont(new java.awt.Font("Arial Unicode MS", 0, 24)); // NOI18N
 
         jLabel79.setFont(new java.awt.Font("Arial Unicode MS", 1, 24)); // NOI18N
-        jLabel79.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel79.setText("搜索: ");
+        jLabel79.setText("Search: ");
 
         jLabel1.setFont(new java.awt.Font("Arial Unicode MS", 1, 48)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("价格表");
+        jLabel1.setText("Price List");
 
         jButton8.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton8.setText("打印");
+        jButton8.setText("Print");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
@@ -185,7 +182,7 @@ public class PriceList extends javax.swing.JFrame {
         });
 
         jButton13.setFont(new java.awt.Font("Arial Unicode MS", 1, 18)); // NOI18N
-        jButton13.setText("关闭");
+        jButton13.setText("Close");
         jButton13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton13ActionPerformed(evt);
@@ -204,15 +201,13 @@ public class PriceList extends javax.swing.JFrame {
                             .addComponent(jScrollPane11)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGap(271, 271, 271)
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel1)
                                     .addGroup(jPanel4Layout.createSequentialGroup()
                                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(84, 84, 84)
-                                        .addComponent(jLabel79))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGap(159, 159, 159)
-                                        .addComponent(jLabel1)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel79)))
+                                .addGap(32, 32, 32)
                                 .addComponent(jTextField89, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -274,12 +269,12 @@ public class PriceList extends javax.swing.JFrame {
             }
         }
         final JComponent[] inputs = new JComponent[]{
-            new JLabel("添加物"),
+            new JLabel("Add-Ons"),
             addOnBox,
-            new JLabel("用量"),
+            new JLabel("Amount"),
             amountField
         };
-        int result = JOptionPane.showConfirmDialog(null, inputs, "增加添加物", JOptionPane.PLAIN_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(null, inputs, "Add Add-Ons", JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             try {
                 AddOns selected = null;
@@ -294,7 +289,7 @@ public class PriceList extends javax.swing.JFrame {
                 Main.selectedAddOns.add(selected);
                 updateTable();
             } catch (HeadlessException | NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "用量格式不对！");
+                JOptionPane.showMessageDialog(this, "Invalid Amount Format！");
             }
         }
     }//GEN-LAST:event_jButton10ActionPerformed
@@ -306,10 +301,10 @@ public class PriceList extends javax.swing.JFrame {
             addOnBox.addItem(selectedAddOn.getName());
         }
         final JComponent[] inputs = new JComponent[]{
-            new JLabel("添加物"),
+            new JLabel("Add-Ons"),
             addOnBox
         };
-        int result = JOptionPane.showConfirmDialog(null, inputs, "移除添加物", JOptionPane.PLAIN_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(null, inputs, "Remove Add-Ons", JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             // grab selected add-on data from storage
             for (AddOns selectedAddOn : Main.selectedAddOns) {
@@ -358,22 +353,11 @@ public class PriceList extends javax.swing.JFrame {
         c.gridx = 0;
         c.gridy = 0;
 
-        c.insets = new Insets(10,10,10,10);
+        c.insets = new Insets(10, 10, 10, 10);
 //        JTable testTable = new JTable(10,2);
         panel.add(jTable1, c);
 
         printComponent(panel);
-        // create pdf file
-//        try {
-//            // header design
-//            MessageFormat header = new MessageFormat("价格表");
-//            // footer design
-//            MessageFormat footer = new MessageFormat("Page {0,number,integer}");
-//            MyPrintable mp = new MyPrintable(jTable1.getPrintable(JTable.PrintMode.FIT_WIDTH, header, footer));
-//            jTable1.print(JTable.PrintMode.FIT_WIDTH, header, footer);
-//        } catch (PrinterException ex) {
-//            ex.printStackTrace();
-//        }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed

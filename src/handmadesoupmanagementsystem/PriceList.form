@@ -51,18 +51,15 @@
                               <Component id="jScrollPane11" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="271" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" attributes="0">
                                           <Component id="jButton8" min="-2" pref="201" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
                                           <Component id="jLabel79" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="159" max="-2" attributes="0"/>
-                                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                      </Group>
                                   </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                                   <Component id="jTextField89" pref="415" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -140,10 +137,10 @@
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="5" rowCount="0">
                     <Column editable="false" title="No." type="java.lang.Object"/>
-                    <Column editable="false" title="&#x7269;&#x54c1;" type="java.lang.Object"/>
-                    <Column editable="false" title="&#x6210;&#x672c;(RM)" type="java.lang.Object"/>
-                    <Column editable="false" title="&#x7528;&#x91cf;(&#x514b;/&#x5347;)" type="java.lang.Object"/>
-                    <Column editable="false" title="&#x4ef7;&#x683c;(RM)" type="java.lang.Object"/>
+                    <Column editable="false" title="Item" type="java.lang.Object"/>
+                    <Column editable="false" title="Cost (RM)" type="java.lang.Object"/>
+                    <Column editable="false" title="Amount (g/l)" type="java.lang.Object"/>
+                    <Column editable="false" title="Total (RM)" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -192,7 +189,8 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial Unicode MS" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="&#x52a0;&#x6dfb;&#x52a0;&#x7269;"/>
+            <Property name="text" type="java.lang.String" value="Add Add-Ons"/>
+            <Property name="actionCommand" type="java.lang.String" value="Add Ingredients"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton10ActionPerformed"/>
@@ -203,7 +201,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial Unicode MS" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="&#x79fb;&#x9664;&#x6dfb;&#x52a0;&#x7269;"/>
+            <Property name="text" type="java.lang.String" value="Remove Add-Ons"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton11ActionPerformed"/>
@@ -221,10 +219,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial Unicode MS" size="24" style="1"/>
             </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="0" red="0" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="&#x641c;&#x7d22;: "/>
+            <Property name="text" type="java.lang.String" value="Search: "/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
@@ -232,10 +227,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial Unicode MS" size="48" style="1"/>
             </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="0" red="0" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="&#x4ef7;&#x683c;&#x8868;"/>
+            <Property name="text" type="java.lang.String" value="Price List"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton8">
@@ -243,7 +235,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial Unicode MS" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="&#x6253;&#x5370;"/>
+            <Property name="text" type="java.lang.String" value="Print"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton8ActionPerformed"/>
@@ -254,7 +246,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial Unicode MS" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="&#x5173;&#x95ed;"/>
+            <Property name="text" type="java.lang.String" value="Close"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton13ActionPerformed"/>

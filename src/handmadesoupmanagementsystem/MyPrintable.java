@@ -59,15 +59,8 @@ public class MyPrintable implements Printable {
         Graphics2D g = img.createGraphics();
         int retValue = delegate.print(g, pageFormat, pageIndex);
         if (retValue == PAGE_EXISTS) {
-//Find out bound of printing...
-//System.out.println("Last Line drawn is : " + detectLastLine(img));
-// try {
-// ImageIO.write(img, "jpg", new File("img" + debugindex++ + ".jpg"));
-// } catch (IOException ex) {
-// }
             spaceLeft = (pageFormat.getImageableY() + pageFormat.getImageableHeight()) - detectLastLine(img);
             retValue = delegate.print(graphics, pageFormat, pageIndex);
-//Updating paper after the hardprint
             Paper paper = pageFormat.getPaper();
             paper.setImageableArea(paper.getImageableX(), paper.getImageableY() + paper.getImageableHeight() - spaceLeft, paper.getImageableWidth(), spaceLeft);
             pageFormat.setPaper(paper);
