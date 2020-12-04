@@ -11,6 +11,11 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import javax.swing.JComboBox;
@@ -317,47 +322,13 @@ public class PriceList extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton11ActionPerformed
 
-    public void printComponent(Component component) {
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        pj.setJobName(" Print Component ");
-
-        pj.setPrintable(new Printable() {
-            public int print(Graphics pg, PageFormat pf, int pageNum) {
-                if (pageNum > 0) {
-                    return Printable.NO_SUCH_PAGE;
-                }
-
-                Graphics2D g2 = (Graphics2D) pg;
-                g2.translate(pf.getImageableX(), pf.getImageableY());
-                component.paint(g2);
-                return Printable.PAGE_EXISTS;
-            }
-        });
-        if (pj.printDialog() == false) {
-            return;
-        }
-
-        try {
-            pj.print();
-        } catch (PrinterException ex) {
-            // handle exception
-        }
-    }
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 0;
-        c.gridy = 0;
-
-        c.insets = new Insets(10, 10, 10, 10);
-//        JTable testTable = new JTable(10,2);
-        panel.add(jTable1, c);
-
-        printComponent(panel);
+        try{
+            jTable1.print();
+        } catch(PrinterException ex){
+        
+        }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
