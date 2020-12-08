@@ -252,7 +252,7 @@ public class Main extends javax.swing.JFrame {
         jButton11 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("手工皂懒人包");
+        setTitle("Handmade Soap Management System");
         setResizable(false);
 
         jPanel4.setBackground(new java.awt.Color(255, 153, 204));
